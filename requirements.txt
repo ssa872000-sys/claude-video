@@ -1,0 +1,6 @@
+pillow>=10
+numpy>=1.24
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.2
+google-auth>=2.23
+anthropic>=0.40
