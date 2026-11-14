@@ -14,21 +14,34 @@ SCOPES = ["https://www.googleapis.com/auth/youtube.upload",
 
 def main():
     if not os.path.exists(SECRET):
-        print("\nВставь сюда ВСЁ содержимое файла client_secret...json (одна строка) и нажми Enter:\n")
-        raw = ""
-        while True:  # читаем строки, пока JSON не станет целым (вставка может быть в несколько строк)
-            line = sys.stdin.readline()
-            if not line:
-                break
-            raw += line
-            try:
-                json.loads(raw)
-                break
-            except ValueError:
-                continue
-        raw = json.dumps(json.loads(raw))  # проверка и в одну строку
+        print("\nВставь client_id (длинная строка, оканчивается на .apps.googleusercontent.com)")
+        print("ИЛИ весь текст файла client_secret...json — и нажми Enter:\n")
+        first = ""
+        while not first:
+            first = sys.stdin.readline().strip()
+        if first.startswith("{"):
+            raw = first
+            while True:
+                try:
+                    data = json.loads(raw)
+                    break
+                except ValueError:
+                    line = sys.stdin.readline()
+                    if not line:
+                        raise
+                    raw += line
+        else:
+            cid = first.strip('" ,')
+            print("\nТеперь вставь client_secret (начинается на GOCSPX-) и нажми Enter:\n")
+            sec = ""
+            while not sec:
+                sec = sys.stdin.readline().strip().strip('" ,')
+            data = {"installed": {"client_id": cid, "client_secret": sec,
+                                  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                                  "token_uri": "https://oauth2.googleapis.com/token",
+                                  "redirect_uris": ["http://localhost"]}}
         with open(SECRET, "w") as f:
-            f.write(raw)
+            json.dump(data, f)
         os.chmod(SECRET, 0o600)
     flow = Flow.from_client_secrets_file(SECRET, scopes=SCOPES, redirect_uri="http://localhost:8080/")
     url, _ = flow.authorization_url(access_type="offline", prompt="consent")
