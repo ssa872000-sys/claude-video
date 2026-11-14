@@ -53,8 +53,10 @@ def main():
     resp = ""
     while "code=" not in resp:
         resp = sys.stdin.readline().strip()
-        if resp and "code=" not in resp and not resp.startswith("http"):
+        if resp.startswith("4/"):
             resp = "code=" + resp  # вставили только сам код
+        elif resp and "code=" not in resp:
+            print("Это не тот адрес. Нужен адрес из Chrome, который начинается с http://localhost:8080/?...code=... Вставь его:")
     from urllib.parse import urlparse, parse_qs, unquote
     q = resp.split("?", 1)[-1]
     code = parse_qs(q).get("code", [None])[0] or unquote(q.split("code=", 1)[1].split("&")[0])
