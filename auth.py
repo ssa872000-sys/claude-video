@@ -15,8 +15,18 @@ SCOPES = ["https://www.googleapis.com/auth/youtube.upload",
 def main():
     if not os.path.exists(SECRET):
         print("\nВставь сюда ВСЁ содержимое файла client_secret...json (одна строка) и нажми Enter:\n")
-        raw = sys.stdin.readline().strip()
-        json.loads(raw)  # проверка
+        raw = ""
+        while True:  # читаем строки, пока JSON не станет целым (вставка может быть в несколько строк)
+            line = sys.stdin.readline()
+            if not line:
+                break
+            raw += line
+            try:
+                json.loads(raw)
+                break
+            except ValueError:
+                continue
+        raw = json.dumps(json.loads(raw))  # проверка и в одну строку
         with open(SECRET, "w") as f:
             f.write(raw)
         os.chmod(SECRET, 0o600)
