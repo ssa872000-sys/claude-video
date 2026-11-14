@@ -43,14 +43,22 @@ def main():
         with open(SECRET, "w") as f:
             json.dump(data, f)
         os.chmod(SECRET, 0o600)
-    flow = Flow.from_client_secrets_file(SECRET, scopes=SCOPES, redirect_uri="http://localhost:8080/")
+    flow = Flow.from_client_secrets_file(SECRET, scopes=SCOPES, redirect_uri="http://localhost:8080/",
+                                         autogenerate_code_verifier=False)
     url, _ = flow.authorization_url(access_type="offline", prompt="consent")
     print("\n1) Открой эту ссылку в браузере телефона и войди в аккаунт КАНАЛА:\n")
     print(url)
     print("\n2) Нажми «Продолжить» везде. В конце браузер покажет ошибку «Не удаётся открыть страницу» — это нормально.")
     print("3) Скопируй ПОЛНЫЙ адрес из адресной строки (начинается с http://localhost:8080/?state=...) и вставь сюда:\n")
-    resp = sys.stdin.readline().strip()
-    flow.fetch_token(authorization_response=resp)
+    resp = ""
+    while "code=" not in resp:
+        resp = sys.stdin.readline().strip()
+        if resp and "code=" not in resp and not resp.startswith("http"):
+            resp = "code=" + resp  # вставили только сам код
+    from urllib.parse import urlparse, parse_qs, unquote
+    q = resp.split("?", 1)[-1]
+    code = parse_qs(q).get("code", [None])[0] or unquote(q.split("code=", 1)[1].split("&")[0])
+    flow.fetch_token(code=code)
     with open(TOKEN, "w") as f:
         f.write(flow.credentials.to_json())
     os.chmod(TOKEN, 0o600)
