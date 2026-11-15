@@ -329,9 +329,13 @@ V = [
 
 
 def main():
+    from hooks_v2 import H
     os.makedirs("bank", exist_ok=True)
     for i, (title, tags, scenes) in enumerate(V):
         num = i + 2
+        if num in H:
+            title, hk, sub = H[num]
+            scenes = [h(hk, sub)] + scenes[1:]
         hook_plain = scenes[0]["text"].replace("*", "")
         desc = (f"{hook_plain}\n\nКаждый день новые факты, которые можно увидеть глазами. Подпишись!\n\n"
                 + " ".join("#" + x.replace(" ", "") for x in tags[:3]) + " #факты #shorts")

@@ -64,6 +64,8 @@ def fmt_num(v, decimals=0):
 
 def parse_marked(text):
     """'Обычный *выделенный* текст' -> [(слово, выделено?)]"""
+    import re as _re
+    text = _re.sub(r"(\d) (%|°C)", "\\1\u00a0\\2", text)  # «2 %» не разрывать по строкам
     words, hl = [], False
     for part in text.replace("\n", " \n ").split(" "):
         if not part:
