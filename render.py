@@ -19,8 +19,8 @@ BG_BOT = (24, 16, 48)
 WHITE = (245, 246, 250)
 MUTED = (150, 158, 190)
 
-DUR = {"hook": 3.6, "text": 4.2, "count": 5.0, "compare": 7.0, "dots": 6.5,
-       "scale": 6.5, "outro": 3.4}
+DUR = {"hook": 4.0, "text": 5.0, "count": 6.0, "compare": 8.5, "dots": 7.5,
+       "scale": 8.0, "outro": 4.0}
 
 _font_cache = {}
 

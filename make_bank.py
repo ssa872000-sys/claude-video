@@ -336,6 +336,9 @@ def main():
         if num in H:
             title, hk, sub = H[num]
             scenes = [h(hk, sub)] + scenes[1:]
+        from extras_v2 import E
+        if num in E:
+            scenes = scenes[:-1] + E[num] + scenes[-1:]
         hook_plain = scenes[0]["text"].replace("*", "")
         desc = (f"{hook_plain}\n\nКаждый день новые факты, которые можно увидеть глазами. Подпишись!\n\n"
                 + " ".join("#" + x.replace(" ", "") for x in tags[:3]) + " #факты #shorts")
